@@ -4,9 +4,10 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.widget.TableLayout;
 import android.widget.TextView;
+
+import com.ecarx.log.Lg;
 
 import ecarx.videomanuals.R;
 import ecarx.videomanuals.application.Settings;
@@ -15,6 +16,8 @@ import ecarx.videomanuals.widget.media.IjkVideoView;
 import ecarx.videomanuals.widget.media.MeasureHelper;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
+
+import static ecarx.videomanuals.activity.MainActivity.VIDEOPATH;
 
 public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnPreparedListener,
         IMediaPlayer.OnCompletionListener, IMediaPlayer.OnErrorListener,
@@ -35,10 +38,11 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
 
+        mVideoPath = getIntent().getStringExtra(VIDEOPATH);
+
         findView();
 
-        getVideoPath("/storage/emulated/legacy/1321.flv");
-
+        //getVideoPath("/storage/emulated/legacy/1321.flv");
 
         setVideoView();
 
@@ -98,6 +102,18 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+
+        ijk_video_view.pause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
 
@@ -118,7 +134,7 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
      */
     @Override
     public void onPrepared(IMediaPlayer iMediaPlayer) {
-        Log.e("TAG", "onPrepared==================");
+        Lg.e( "onPrepared==================");
         //监听视频是否已经准备完成开始播放。（可以在这里处理视频封面的显示跟隐藏）
         if (mVideoPath != null) {
             ijk_video_view.start();
@@ -132,7 +148,7 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
      */
     @Override
     public void onCompletion(IMediaPlayer iMediaPlayer) {
-        Log.e("TAG", "onCompletion==================");
+        Lg.e( "onCompletion==================");
         finish();
     }
 

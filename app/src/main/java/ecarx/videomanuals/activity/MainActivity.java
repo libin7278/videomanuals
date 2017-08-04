@@ -1,24 +1,89 @@
 package ecarx.videomanuals.activity;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
-import android.widget.TextView;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.Toast;
+
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.ecarx.log.Lg;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import ecarx.videomanuals.R;
+import ecarx.videomanuals.adapter.VideoListAdapter;
+import ecarx.videomanuals.bean.VideoListBean;
+import ecarx.videomanuals.utils.FileUtils;
 
 public class MainActivity extends AppCompatActivity {
+    private List<VideoListBean> videoList = new ArrayList<VideoListBean>();
+    private VideoListAdapter videoListAdapter;
+    private RecyclerView rv_video_list;
+
+    public static final String VIDEOPATH = "videoPath";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Example of a call to a native method
-        TextView tv = (TextView) findViewById(R.id.sample_text);
-        tv.setText("lasla");
+        findView();
 
-        startActivity(new Intent(this,VideoActivity.class));
+        String path = "/storage/emulated/legacy/videoManuals";
+        boolean fileExists = FileUtils.isFileExists(path);
 
+        Lg.e("fileExists=======>"+fileExists);
+        if(fileExists){
+            List<File> files = FileUtils.listFilesInDir(path);
+            videoList.clear();
+            for (int i = 0;i<files.size();i++){
+                VideoListBean videoListBean = new VideoListBean();
+                MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+                mediaMetadataRetriever.setDataSource(files.get(i).getPath());
+
+                String videoLength = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+                videoListBean.setVideoLength(videoLength);
+                videoListBean.setVideoName(files.get(i).getName());
+                videoListBean.setVideoPath(files.get(i).getPath());
+                Bitmap bitmap = mediaMetadataRetriever.getFrameAtTime(137883*1000);
+                Drawable drawable= new BitmapDrawable(bitmap);
+                videoListBean.setCover(drawable);
+                videoList.add(videoListBean);
+            }
+
+            Lg.e("fileExists=======>"+files);
+        }else {
+            Toast.makeText(this,"暂无视频！！！！！",Toast.LENGTH_SHORT).show();
+        }
+
+        if (videoListAdapter == null) {
+            videoListAdapter = new VideoListAdapter(videoList);
+        }
+        rv_video_list.setLayoutManager(new GridLayoutManager(this,3));
+        rv_video_list.setAdapter(videoListAdapter);
+
+        videoListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Intent intent = new Intent(MainActivity.this,VideoActivity.class);
+                intent.putExtra(VIDEOPATH,videoList.get(position).getVideoPath());
+                startActivity(intent);
+            }
+        });
+
+
+    }
+
+    private void findView() {
+        rv_video_list  = (RecyclerView) findViewById(R.id.rv_video_list);
     }
 }
