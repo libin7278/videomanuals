@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
     <ecarx.videomanuals.widget.media.IjkVideoView
         android:id="@+id/ijk_video_view"
@@ -31,11 +30,34 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#77000000"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        tools:context=".toolbar_widget" />
+        android:layout_height="@dimen/dp_80"
+        android:background="#66000000"
+        android:minHeight="?attr/actionBarSize">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_centerVertical="true"
+                android:id="@+id/iv_back"
+                android:background="@drawable/back_icon"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="@dimen/dp_40"
+                android:layout_width="@dimen/dp_50"
+                android:layout_height="@dimen/dp_50"
+                tools:ignore="RtlCompat" />
+
+            <TextView
+                android:layout_centerInParent="true"
+                android:text="sdasdssdsada"
+                android:id="@+id/tv_video_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/sp_32"
+                android:textColor="#ffffff" />
+        </RelativeLayout>
+        
+    </android.support.v7.widget.Toolbar>
 
 </FrameLayout>

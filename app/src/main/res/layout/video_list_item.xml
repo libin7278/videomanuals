@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="370dp"
-    android:layout_height="270dp"
+    android:layout_width="@dimen/dp_410"
+    android:layout_height="@dimen/dp_280"
     android:orientation="vertical">
 
     <ImageView
+        android:layout_gravity="center_horizontal"
         android:id="@+id/iv_cover"
-        android:layout_width="330dp"
-        android:layout_height="230dp" />
+        android:layout_width="@dimen/dp_395"
+        android:layout_height="@dimen/dp_250" />
 
     <TextView
-        android:textSize="28sp"
+        android:layout_gravity="center"
+        android:singleLine="true"
+        android:textSize="@dimen/sp_24"
         android:textColor="#ffffff"
         android:id="@+id/tv_video_name"
         android:layout_width="wrap_content"

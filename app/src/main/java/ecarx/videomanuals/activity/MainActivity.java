@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView rv_video_list;
 
     public static final String VIDEOPATH = "videoPath";
+    public static final String VIDEONAME = "videoName";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         findView();
 
-        String path = "/storage/emulated/legacy/videoManuals";
+        String path = "/private/VideoManual";
         boolean fileExists = FileUtils.isFileExists(path);
 
         Lg.e("fileExists=======>"+fileExists);
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                 videoListBean.setVideoLength(videoLength);
                 videoListBean.setVideoName(files.get(i).getName());
                 videoListBean.setVideoPath(files.get(i).getPath());
-                Bitmap bitmap = mediaMetadataRetriever.getFrameAtTime(137883*1000);
+                Bitmap bitmap = mediaMetadataRetriever.getFrameAtTime(20000*1000);
                 Drawable drawable= new BitmapDrawable(bitmap);
                 videoListBean.setCover(drawable);
                 videoList.add(videoListBean);
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent(MainActivity.this,VideoActivity.class);
                 intent.putExtra(VIDEOPATH,videoList.get(position).getVideoPath());
+                intent.putExtra(VIDEONAME,videoList.get(position).getVideoPath());
                 startActivity(intent);
             }
         });

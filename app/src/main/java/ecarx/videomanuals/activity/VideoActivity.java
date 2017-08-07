@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
@@ -17,6 +19,7 @@ import ecarx.videomanuals.widget.media.MeasureHelper;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
+import static ecarx.videomanuals.activity.MainActivity.VIDEONAME;
 import static ecarx.videomanuals.activity.MainActivity.VIDEOPATH;
 
 public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnPreparedListener,
@@ -26,10 +29,13 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
     private IjkVideoView ijk_video_view;
     private TextView toast_text_view;
     private TableLayout mHudView;
+    private TextView tv_video_title;
+    private ImageView iv_back;
 
     private AndroidMediaController mMediaController;
     Settings mSettings;
     private String mVideoPath;
+    private String mVideoName;
 
     private boolean mBackPressed;
 
@@ -39,10 +45,9 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
         setContentView(R.layout.activity_video);
 
         mVideoPath = getIntent().getStringExtra(VIDEOPATH);
+        mVideoName = getIntent().getStringExtra(VIDEONAME);
 
         findView();
-
-        //getVideoPath("/storage/emulated/legacy/1321.flv");
 
         setVideoView();
 
@@ -50,15 +55,17 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
 
     }
 
-    private void getVideoPath(String path) {
-        mVideoPath = path;
-    }
-
     private void onlistener() {
         ijk_video_view.setOnPreparedListener(this);
         ijk_video_view.setOnCompletionListener(this);
         ijk_video_view.setOnErrorListener(this);
         ijk_video_view.setOnInfoListener(this);
+        iv_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     private void setVideoView() {
@@ -76,9 +83,13 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
         IjkMediaPlayer.loadLibrariesOnce(null);
         IjkMediaPlayer.native_profileBegin("libijkplayer.so");
 
+        //setData
+//        MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+//        mediaMetadataRetriever.setDataSource(mVideoPath);
         ijk_video_view.setHudView(mHudView);
         ijk_video_view.setVideoPath(mVideoPath);
         ijk_video_view.setMediaController(mMediaController);
+        tv_video_title.setText(mVideoName.substring(mVideoName.lastIndexOf("/")+1));
 
         //设置scale
         int aspectRatio = ijk_video_view.toggleAspectRatio();
@@ -92,6 +103,8 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
         ijk_video_view = (IjkVideoView) findViewById(R.id.ijk_video_view);
         mHudView = (TableLayout) findViewById(R.id.hud_view);
         toast_text_view = (TextView) findViewById(R.id.toast_text_view);
+        iv_back = (ImageView) findViewById(R.id.iv_back);
+        tv_video_title = (TextView) findViewById(R.id.tv_video_title);
     }
 
     @Override

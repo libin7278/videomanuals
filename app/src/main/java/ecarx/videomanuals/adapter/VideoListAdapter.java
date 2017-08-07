@@ -23,6 +23,6 @@ public class VideoListAdapter extends BaseQuickAdapter<VideoListBean, BaseViewHo
     @Override
     protected void convert(BaseViewHolder helper, VideoListBean item) {
         helper.setImageDrawable(R.id.iv_cover, item.getCover())
-                .setText(R.id.tv_video_name, item.getVideoName()+"  时长："+item.getVideoLength());
+                .setText(R.id.tv_video_name, item.getVideoName());
     }
 }
