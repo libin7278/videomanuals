@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <selector>
+            <item android:state_enabled="false">
+                <color android:color="@android:color/transparent" />
+            </item>
+        </selector>
+    </item>
+    <item android:id="@android:id/secondaryProgress">
+        <clip>
+            <shape>
+                <solid android:color="@android:color/transparent" />
+            </shape>
+        </clip>
+    </item>
+    <item android:id="@android:id/progress">
+        <scale android:scaleWidth="100%">
+            <selector>
+                <item android:state_enabled="false">
+                    <color android:color="@android:color/transparent"/>
+                </item>
+                <item android:drawable="@drawable/progress_bar_line"/>
+            </selector>
+        </scale>
+    </item>
+</layer-list>

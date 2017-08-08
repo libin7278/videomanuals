@@ -67,4 +67,6 @@
     <string name="VideoView_player_AndroidMediaPlayer">Player: AndroidMediaPlayer</string>
     <string name="VideoView_player_IjkMediaPlayer">Player: IjkMediaPlayer</string>
     <string name="VideoView_player_IjkExoMediaPlayer">Player: IjkExoMediaPlayer</string>
+    <string name="lockscreen_transport_play_description">play</string>
+    <string name="lockscreen_transport_pause_description">pause</string>
 </resources>

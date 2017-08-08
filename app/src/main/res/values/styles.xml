@@ -17,4 +17,11 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="player_progress" parent="Base.Widget.AppCompat.SeekBar">
+        <item name="android:progressDrawable">@drawable/po_seekbar</item>
+        <item name="android:thumb">@drawable/progress_drawable</item>
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+    </style>
+
 </resources>
