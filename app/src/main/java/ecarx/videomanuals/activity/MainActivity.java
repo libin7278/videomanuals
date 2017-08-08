@@ -16,21 +16,27 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.ecarx.log.Lg;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import ecarx.videomanuals.R;
 import ecarx.videomanuals.adapter.VideoListAdapter;
+import ecarx.videomanuals.bean.VideoInfoBean;
 import ecarx.videomanuals.bean.VideoListBean;
+import ecarx.videomanuals.utils.CacheUtils;
 import ecarx.videomanuals.utils.FileUtils;
 
 public class MainActivity extends AppCompatActivity {
     private List<VideoListBean> videoList = new ArrayList<VideoListBean>();
+    private List<VideoInfoBean> videoInfo = new ArrayList<VideoInfoBean>();
     private VideoListAdapter videoListAdapter;
     private RecyclerView rv_video_list;
 
     public static final String VIDEOPATH = "videoPath";
     public static final String VIDEONAME = "videoName";
+    public static final String VIDEOPOSITION = "videoPosition";
+    public static final String VIDEOIBFO = "videoInfo";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
             videoList.clear();
             for (int i = 0;i<files.size();i++){
                 VideoListBean videoListBean = new VideoListBean();
+                VideoInfoBean videoInfoBean = new VideoInfoBean();
                 MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
                 mediaMetadataRetriever.setDataSource(files.get(i).getPath());
 
@@ -59,9 +66,14 @@ public class MainActivity extends AppCompatActivity {
                 Drawable drawable= new BitmapDrawable(bitmap);
                 videoListBean.setCover(drawable);
                 videoList.add(videoListBean);
+
+                videoInfoBean.setVideoName(files.get(i).getName());
+                videoInfoBean.setVideoPath(files.get(i).getPath());
+                videoInfo.add(videoInfoBean);
             }
 
             Lg.e("fileExists=======>"+files);
+            CacheUtils.getInstance().put(VIDEOIBFO, (Serializable) videoInfo);
         }else {
             Toast.makeText(this,"暂无视频！！！！！",Toast.LENGTH_SHORT).show();
         }
@@ -77,7 +89,9 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent(MainActivity.this,VideoActivity.class);
                 intent.putExtra(VIDEOPATH,videoList.get(position).getVideoPath());
-                intent.putExtra(VIDEONAME,videoList.get(position).getVideoPath());
+                intent.putExtra(VIDEONAME,videoList.get(position).getVideoName());
+                intent.putExtra(VIDEOPOSITION,position);
+
                 startActivity(intent);
             }
         });

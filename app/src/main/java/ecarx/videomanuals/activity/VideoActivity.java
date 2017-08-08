@@ -8,19 +8,27 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ecarx.log.Lg;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ecarx.videomanuals.R;
 import ecarx.videomanuals.application.Settings;
+import ecarx.videomanuals.bean.VideoInfoBean;
+import ecarx.videomanuals.utils.CacheUtils;
 import ecarx.videomanuals.widget.media.AndroidMediaController;
 import ecarx.videomanuals.widget.media.IjkVideoView;
 import ecarx.videomanuals.widget.media.MeasureHelper;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
+import static ecarx.videomanuals.activity.MainActivity.VIDEOIBFO;
 import static ecarx.videomanuals.activity.MainActivity.VIDEONAME;
 import static ecarx.videomanuals.activity.MainActivity.VIDEOPATH;
+import static ecarx.videomanuals.activity.MainActivity.VIDEOPOSITION;
 
 public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnPreparedListener,
         IMediaPlayer.OnCompletionListener, IMediaPlayer.OnErrorListener,
@@ -36,23 +44,32 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
     Settings mSettings;
     private String mVideoPath;
     private String mVideoName;
+    private int mVideoPosition;
 
     private boolean mBackPressed;
+
+    private List<VideoInfoBean> videoInfo = new ArrayList<VideoInfoBean>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
 
-        mVideoPath = getIntent().getStringExtra(VIDEOPATH);
-        mVideoName = getIntent().getStringExtra(VIDEONAME);
+        initData();
 
         findView();
 
         setVideoView();
 
         onlistener();
+    }
 
+    private void initData() {
+        mVideoPath = getIntent().getStringExtra(VIDEOPATH);
+        mVideoName = getIntent().getStringExtra(VIDEONAME);
+        mVideoPosition = getIntent().getIntExtra(VIDEOPOSITION,0);
+
+        videoInfo = (List<VideoInfoBean>) CacheUtils.getInstance().getSerializable(VIDEOIBFO);
     }
 
     private void onlistener() {
@@ -64,6 +81,38 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+
+        mMediaController.setPrevNextListeners(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(videoInfo != null){
+                    if(mVideoPosition < videoInfo.size()-1){
+                        ijk_video_view.setVideoPath(videoInfo.get(mVideoPosition = mVideoPosition+1).getVideoPath());
+                        String videoName = videoInfo.get(mVideoPosition).getVideoName();
+                        tv_video_title.setText(videoName.substring(videoName.lastIndexOf("/") + 1));
+                        Lg.e(mVideoPosition+"==========");
+                    }else {
+                        Toast.makeText(VideoActivity.this,"已经是最后一个",Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+            }
+        }, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(videoInfo != null){
+                    if(mVideoPosition > 0){
+                        ijk_video_view.setVideoPath(videoInfo.get(mVideoPosition = mVideoPosition-1).getVideoPath());
+                        String videoName = videoInfo.get(mVideoPosition).getVideoName();
+                        tv_video_title.setText(videoName.substring(videoName.lastIndexOf("/") + 1));
+                        Lg.e(mVideoPosition+"==========");
+
+                    }else {
+                        Toast.makeText(VideoActivity.this,"已经是第一个",Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
         });
     }
@@ -89,7 +138,7 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
         ijk_video_view.setHudView(mHudView);
         ijk_video_view.setVideoPath(mVideoPath);
         ijk_video_view.setMediaController(mMediaController);
-        tv_video_title.setText(mVideoName.substring(mVideoName.lastIndexOf("/")+1));
+        tv_video_title.setText(mVideoName.substring(mVideoName.lastIndexOf("/") + 1));
 
         //设置scale
         int aspectRatio = ijk_video_view.toggleAspectRatio();
@@ -147,7 +196,7 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
      */
     @Override
     public void onPrepared(IMediaPlayer iMediaPlayer) {
-        Lg.e( "onPrepared==================");
+        Lg.e("onPrepared==================");
         //监听视频是否已经准备完成开始播放。（可以在这里处理视频封面的显示跟隐藏）
         if (mVideoPath != null) {
             ijk_video_view.start();
@@ -161,7 +210,7 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
      */
     @Override
     public void onCompletion(IMediaPlayer iMediaPlayer) {
-        Lg.e( "onCompletion==================");
+        Lg.e("onCompletion==================");
         finish();
     }
 

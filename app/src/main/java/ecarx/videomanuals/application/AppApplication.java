@@ -8,6 +8,7 @@ import com.ecarx.log.Lg;
 import java.io.File;
 
 import ecarx.videomanuals.BuildConfig;
+import ecarx.videomanuals.utils.Utils;
 
 /**
  * Created by doudou on 2017/8/4.
@@ -17,6 +18,7 @@ public class AppApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Utils.init(this);
         initECarXLog();
     }
 

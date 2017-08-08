@@ -1,18 +1,15 @@
 package ecarx.videomanuals.bean;
 
-import android.graphics.drawable.Drawable;
-
 import java.io.Serializable;
 
 /**
- * Created by doudou on 2017/8/4.
+ * Created by doudou on 2017/8/8.
  */
 
-public class VideoListBean implements Serializable{
+public class VideoInfoBean implements Serializable {
     String videoName;
     String videoLength;
     String videoPath;
-    Drawable cover;
 
     public String getVideoPath() {
         return videoPath;
@@ -37,13 +34,4 @@ public class VideoListBean implements Serializable{
     public void setVideoLength(String videoLength) {
         this.videoLength = videoLength;
     }
-
-    public Drawable getCover() {
-        return cover;
-    }
-
-    public void setCover(Drawable cover) {
-        this.cover = cover;
-    }
-
 }
