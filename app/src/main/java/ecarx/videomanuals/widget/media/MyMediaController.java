@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.PixelFormat;
 import android.media.AudioManager;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -20,6 +22,8 @@ import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.ecarx.log.Lg;
 
 import java.lang.reflect.Constructor;
 import java.util.Formatter;
@@ -59,6 +63,17 @@ public class MyMediaController extends FrameLayout{
     private ImageButton mPrevButton;
     private CharSequence mPlayDescription;
     private CharSequence mPauseDescription;
+    private static final int SHOWMESSAGE = 552;
+
+    private  Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            if(SHOWMESSAGE == msg.what){
+                hide();
+            }
+            return true;
+        }
+    });
 
     public MyMediaController(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -164,9 +179,11 @@ public class MyMediaController extends FrameLayout{
     private final OnTouchListener mTouchListener = new OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
+            Lg.e("onTouch=======mycontrol");
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 if (mShowing) {
                     hide();
+                    Lg.e("hide()===");
                 }
             }
             return false;
@@ -340,8 +357,8 @@ public class MyMediaController extends FrameLayout{
         post(mShowProgress);
 
         if (timeout != 0) {
-            removeCallbacks(mFadeOut);
-            postDelayed(mFadeOut, timeout);
+            mHandler.removeMessages(SHOWMESSAGE);
+            mHandler.sendEmptyMessageDelayed(SHOWMESSAGE,timeout);
         }
     }
 
@@ -367,12 +384,13 @@ public class MyMediaController extends FrameLayout{
         }
     }
 
-    private final Runnable mFadeOut = new Runnable() {
-        @Override
-        public void run() {
-            hide();
-        }
-    };
+//    private final Runnable mFadeOut = new Runnable() {
+//        @Override
+//        public void run() {
+//            Lg.e("hide()===");
+//            hide();
+//        }
+//    };
 
     private final Runnable mShowProgress = new Runnable() {
         @Override

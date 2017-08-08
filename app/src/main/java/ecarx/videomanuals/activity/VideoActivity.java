@@ -115,6 +115,7 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
                 }
             }
         });
+
     }
 
     private void setVideoView() {
@@ -127,7 +128,6 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
 
         mMediaController = new AndroidMediaController(this, false);
         mMediaController.setSupportActionBar(actionBar);
-
 
         IjkMediaPlayer.loadLibrariesOnce(null);
         IjkMediaPlayer.native_profileBegin("libijkplayer.so");

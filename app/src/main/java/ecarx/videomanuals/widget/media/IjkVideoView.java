@@ -38,6 +38,8 @@ import android.widget.FrameLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
+import com.ecarx.log.Lg;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -733,6 +735,7 @@ public class IjkVideoView extends FrameLayout implements MyMediaController.Media
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         if (isInPlaybackState() && mMediaController != null) {
+            Lg.e("toggleMediaControlsVisiblity=======onTouchEvent");
             toggleMediaControlsVisiblity();
         }
         return false;
@@ -741,6 +744,7 @@ public class IjkVideoView extends FrameLayout implements MyMediaController.Media
     @Override
     public boolean onTrackballEvent(MotionEvent ev) {
         if (isInPlaybackState() && mMediaController != null) {
+            Lg.e("toggleMediaControlsVisiblity=======onTrackballEvent");
             toggleMediaControlsVisiblity();
         }
         return false;
@@ -780,6 +784,8 @@ public class IjkVideoView extends FrameLayout implements MyMediaController.Media
                 }
                 return true;
             } else {
+                Lg.e("toggleMediaControlsVisiblity=======onKeyDown");
+
                 toggleMediaControlsVisiblity();
             }
         }

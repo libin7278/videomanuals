@@ -24,6 +24,8 @@ import android.support.v7.app.ActionBar;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.ecarx.log.Lg;
+
 import java.util.ArrayList;
 
 public class AndroidMediaController extends MyMediaController implements IMediaController {
@@ -60,6 +62,7 @@ public class AndroidMediaController extends MyMediaController implements IMediaC
 
     @Override
     public void show() {
+        Lg.e("show======");
         super.show();
         if (mActionBar != null)
             mActionBar.show();
