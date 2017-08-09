@@ -1,8 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/dp_110"
+    android:layout_height="@dimen/dp_400"
     android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/fl_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_30">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_30"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_15" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_15"
+                android:background="#66000000" />
+        </LinearLayout>
+
+        <SeekBar
+            android:id="@+id/mediacontroller_progress"
+            style="@style/player_progress"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_30"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true" />
+
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -82,36 +112,4 @@
             android:textStyle="bold" />
 
     </LinearLayout>
-
-    <FrameLayout
-        android:id="@+id/fl_seekbar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_30">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_30"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_15" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/dp_15"
-                android:background="#66000000" />
-        </LinearLayout>
-
-        <SeekBar
-            android:id="@+id/mediacontroller_progress"
-            style="@style/player_progress"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_30"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentStart="true" />
-
-    </FrameLayout>
-
-
-</RelativeLayout>
+</LinearLayout>

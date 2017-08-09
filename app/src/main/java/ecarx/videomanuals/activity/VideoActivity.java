@@ -6,20 +6,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ecarx.log.Lg;
-
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.List;
+import java.util.Locale;
 
 import ecarx.videomanuals.R;
 import ecarx.videomanuals.application.Settings;
 import ecarx.videomanuals.bean.VideoInfoBean;
 import ecarx.videomanuals.utils.CacheUtils;
 import ecarx.videomanuals.widget.media.AndroidMediaController;
+import ecarx.videomanuals.widget.media.IProgressChangeListener;
 import ecarx.videomanuals.widget.media.IjkVideoView;
 import ecarx.videomanuals.widget.media.MeasureHelper;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
@@ -35,10 +37,14 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
         IMediaPlayer.OnInfoListener {
 
     private IjkVideoView ijk_video_view;
+    private LinearLayout ll_progress_toast;
     private TextView toast_text_view;
     private TableLayout mHudView;
     private TextView tv_video_title;
+    private TextView tv_progress_change_time;
+    private TextView tv_progress_total_time;
     private ImageView iv_back;
+    private ImageView iv_reverse_speed;
 
     private AndroidMediaController mMediaController;
     Settings mSettings;
@@ -92,7 +98,6 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
                         ijk_video_view.setVideoPath(videoInfo.get(mVideoPosition = mVideoPosition+1).getVideoPath());
                         String videoName = videoInfo.get(mVideoPosition).getVideoName();
                         tv_video_title.setText(videoName.substring(videoName.lastIndexOf("/") + 1));
-                        Lg.e(mVideoPosition+"==========");
                     }else {
                         Toast.makeText(VideoActivity.this,"已经是最后一个",Toast.LENGTH_SHORT).show();
                     }
@@ -107,12 +112,35 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
                         ijk_video_view.setVideoPath(videoInfo.get(mVideoPosition = mVideoPosition-1).getVideoPath());
                         String videoName = videoInfo.get(mVideoPosition).getVideoName();
                         tv_video_title.setText(videoName.substring(videoName.lastIndexOf("/") + 1));
-                        Lg.e(mVideoPosition+"==========");
-
                     }else {
                         Toast.makeText(VideoActivity.this,"已经是第一个",Toast.LENGTH_SHORT).show();
                     }
                 }
+            }
+        });
+        final long[] oldPersion = {0};
+        mMediaController.setProgressLIstener(new IProgressChangeListener() {
+            @Override
+            public void onStartTrackingTouch() {
+                ll_progress_toast.setVisibility(View.VISIBLE);
+
+            }
+            @Override
+            public void onProgressChanged(String s, long newposition) {
+                tv_progress_change_time.setText(s);
+
+                if(oldPersion[0] > newposition){
+                    iv_reverse_speed.setImageResource(R.drawable.icon_media_reverse);
+                    oldPersion[0] = newposition;
+                }else {
+                    iv_reverse_speed.setImageResource(R.drawable.icon_media_speed);
+                    oldPersion[0] = newposition;
+                }
+            }
+
+            @Override
+            public void onStopTrackingTouch() {
+                ll_progress_toast.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -152,8 +180,12 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
         ijk_video_view = (IjkVideoView) findViewById(R.id.ijk_video_view);
         mHudView = (TableLayout) findViewById(R.id.hud_view);
         toast_text_view = (TextView) findViewById(R.id.toast_text_view);
+        tv_progress_total_time = (TextView) findViewById(R.id.tv_progress_total_time);
+        tv_progress_change_time = (TextView) findViewById(R.id.tv_progress_change_time);
         iv_back = (ImageView) findViewById(R.id.iv_back);
+        iv_reverse_speed = (ImageView) findViewById(R.id.iv_reverse_speed);
         tv_video_title = (TextView) findViewById(R.id.tv_video_title);
+        ll_progress_toast = (LinearLayout) findViewById(R.id.ll_progress_toast);
     }
 
     @Override
@@ -196,7 +228,6 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
      */
     @Override
     public void onPrepared(IMediaPlayer iMediaPlayer) {
-        Lg.e("onPrepared==================");
         //监听视频是否已经准备完成开始播放。（可以在这里处理视频封面的显示跟隐藏）
         if (mVideoPath != null) {
             ijk_video_view.start();
@@ -210,7 +241,6 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
      */
     @Override
     public void onCompletion(IMediaPlayer iMediaPlayer) {
-        Lg.e("onCompletion==================");
         finish();
     }
 
@@ -237,6 +267,24 @@ public class VideoActivity extends AppCompatActivity implements IMediaPlayer.OnP
      */
     @Override
     public boolean onInfo(IMediaPlayer iMediaPlayer, int i, int i1) {
+        tv_progress_total_time.setText(stringForTime( (int) iMediaPlayer.getDuration()));
+
         return false;
+    }
+
+    private String stringForTime(int timeMs) {
+        int totalSeconds = timeMs / 1000;
+
+        int seconds = totalSeconds % 60;
+        int minutes = (totalSeconds / 60) % 60;
+        int hours   = totalSeconds / 3600;
+
+        StringBuilder stringBuilder = new StringBuilder();
+        Formatter formatter = new Formatter(stringBuilder, Locale.getDefault());
+        if (hours > 0) {
+            return formatter.format("%d:%02d:%02d", hours, minutes, seconds).toString();
+        } else {
+            return formatter.format("%02d:%02d", minutes, seconds).toString();
+        }
     }
 }

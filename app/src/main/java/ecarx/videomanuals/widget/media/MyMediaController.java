@@ -23,8 +23,6 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.ecarx.log.Lg;
-
 import java.lang.reflect.Constructor;
 import java.util.Formatter;
 import java.util.Locale;
@@ -45,7 +43,7 @@ public class MyMediaController extends FrameLayout{
     private Window mWindow;
     private View mDecor;
     private WindowManager.LayoutParams mDecorLayoutParams;
-    private ProgressBar mProgress;
+    public ProgressBar mProgress;
     private TextView mEndTime, mCurrentTime;
     private boolean mShowing;
     private boolean mDragging;
@@ -65,7 +63,9 @@ public class MyMediaController extends FrameLayout{
     private CharSequence mPauseDescription;
     private static final int SHOWMESSAGE = 552;
 
-    private  Handler mHandler = new Handler(new Handler.Callback() {
+    private IProgressChangeListener mIProgressChangeListener;
+
+    public Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             if(SHOWMESSAGE == msg.what){
@@ -179,11 +179,9 @@ public class MyMediaController extends FrameLayout{
     private final OnTouchListener mTouchListener = new OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            Lg.e("onTouch=======mycontrol");
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 if (mShowing) {
                     hide();
-                    Lg.e("hide()===");
                 }
             }
             return false;
@@ -567,6 +565,8 @@ public class MyMediaController extends FrameLayout{
             // we will post one of these messages to the queue again and
             // this ensures that there will be exactly one message queued up.
             removeCallbacks(mShowProgress);
+
+            mIProgressChangeListener.onStartTrackingTouch();
         }
 
         @Override
@@ -582,6 +582,8 @@ public class MyMediaController extends FrameLayout{
             mPlayer.seekTo( (int) newposition);
             if (mCurrentTime != null)
                 mCurrentTime.setText(stringForTime( (int) newposition));
+
+            mIProgressChangeListener.onProgressChanged(stringForTime( (int) newposition),newposition);
         }
 
         @Override
@@ -595,8 +597,15 @@ public class MyMediaController extends FrameLayout{
             // the call to show() does not guarantee this because it is a
             // no-op if we are already showing.
             post(mShowProgress);
+
+            mIProgressChangeListener.onStopTrackingTouch();
         }
     };
+
+    public void setProgressLIstener(IProgressChangeListener ipcl) {
+        mIProgressChangeListener = ipcl;
+    }
+
 
     @Override
     public void setEnabled(boolean enabled) {
